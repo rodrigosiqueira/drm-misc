@@ -19,6 +19,22 @@ static const struct drm_crtc_funcs vkms_crtc_funcs = {
 	.atomic_destroy_state   = drm_atomic_helper_crtc_destroy_state,
 };
 
+static int vkms_crtc_atomic_check(struct drm_crtc *crtc,
+				  struct drm_crtc_state *state)
+{
+	return 0;
+}
+
+static void vkms_crtc_atomic_enable(struct drm_crtc *crtc,
+				    struct drm_crtc_state *old_state)
+{
+}
+
+static const struct drm_crtc_helper_funcs vkms_crtc_helper_funcs = {
+	.atomic_check  = vkms_crtc_atomic_check,
+	.atomic_enable = vkms_crtc_atomic_enable,
+};
+
 int vkms_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
 		   struct drm_plane *primary, struct drm_plane *cursor)
 {
@@ -30,6 +46,8 @@ int vkms_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
 		DRM_ERROR("Failed to init CRTC\n");
 		return ret;
 	}
+
+	drm_crtc_helper_add(crtc, &vkms_crtc_helper_funcs);
 
 	return ret;
 }
